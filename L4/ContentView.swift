@@ -1,21 +1,44 @@
-//
-//  ContentView.swift
-//  L4
-//
-//  Created by Anatoliy Odinetskiy on 09.03.2024.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @State private var performAnimation: Bool = false
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Button {
+            withAnimation(.interpolatingSpring(stiffness: 170, damping: 15)){
+                performAnimation.toggle()
+            }
+            completion: {
+                performAnimation.toggle()
+            }
+        } label: {
+            GeometryReader(content: { geometry in
+                let width = geometry.size.width / 2
+
+                HStack(alignment: .center, spacing: 0) {
+                    Image(systemName: "play.fill")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: performAnimation ? width : .zero)
+                        .opacity(performAnimation ? 1 : .zero)
+
+                    Image(systemName: "play.fill")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+
+                    Image(systemName: "play.fill")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: performAnimation ? 0.5 : width)
+                        .opacity(performAnimation ? .zero : 1)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            })
         }
-        .padding()
+        .frame(maxWidth: 62)
     }
 }
 
