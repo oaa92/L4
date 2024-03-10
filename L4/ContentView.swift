@@ -11,6 +11,7 @@ struct BackgroundButtonStyle: ButtonStyle {
     @Binding var performAnimation: Bool
 
     func makeBody(configuration: Configuration) -> some View {
+        let performAnimation = performAnimation || configuration.isPressed
         let scale: Double = performAnimation ? 0.86 : 1
         let duration = 0.22
         let opacity: Double = performAnimation ? 0.25 : 0
@@ -30,20 +31,20 @@ struct BackgroundButtonStyle: ButtonStyle {
 }
 
 struct PlayNextButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        ButtonView(performAnimation: configuration.isPressed)
-    }
-}
-
-struct ButtonView: View {
     @State var performAnimation = false
 
-    var body: some View {
-        Button {withAnimation(.interpolatingSpring(stiffness: 170, damping: 15)) {
-            performAnimation.toggle()
-        } completion: {
-            performAnimation.toggle()
-        }}
+    func makeBody(configuration: Configuration) -> some View {
+        return Button {
+            guard !performAnimation else {
+                return
+            }
+
+            withAnimation(.interpolatingSpring(stiffness: 170, damping: 15)) {
+                performAnimation.toggle()
+            } completion: {
+                performAnimation.toggle()
+            }
+        }
         label: {
             PlayImagesView(performAnimation: $performAnimation)
                 .frame(maxWidth: 64, alignment: .center)
